@@ -312,13 +312,21 @@ test('should register authentication provider and push disposable to subscriptio
 
   await authenticationProviderManager.registerAuthenticationProvider();
 
-  expect(authentication.registerAuthenticationProvider).toHaveBeenCalledWith('ibmcloud-account', 'IBM Cloud Account', {
-    onDidChangeSessions: authenticationProviderManager.getOnDidChangeSessions().event,
-    createSession: expect.any(Function),
-    getSessions: expect.any(Function),
-    removeSession: expect.any(Function),
-  });
-
+  expect(authentication.registerAuthenticationProvider).toHaveBeenCalledWith(
+    'ibmcloud-account',
+    'IBM Cloud Account',
+    {
+      onDidChangeSessions: authenticationProviderManager.getOnDidChangeSessions().event,
+      createSession: expect.any(Function),
+      getSessions: expect.any(Function),
+      removeSession: expect.any(Function),
+    },
+    {
+      images: {
+        icon: 'icon.png',
+      },
+    },
+  );
   expect(extensionContextMock.subscriptions).toContain(mockDisposable);
 });
 

@@ -182,6 +182,11 @@ export class AuthenticationProviderManager {
       AuthenticationProviderManager.AUTH_ID,
       'IBM Cloud Account',
       authenticationProvider,
+      {
+        images: {
+          icon: 'icon.png',
+        },
+      },
     );
 
     this.extensionContext.subscriptions.push(authDisposable);
