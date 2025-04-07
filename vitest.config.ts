@@ -15,13 +15,14 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import { resolve } from 'node:path';
+import { join, resolve } from 'node:path';
 import { defineConfig } from 'vitest/config';
 
 // DefineWorkspace provides a nice type hinting DX
 export default defineConfig({
   resolve: {
     alias: {
+      '/@/': `${join(__dirname, 'src')}/`,
       '@podman-desktop/api': resolve(__dirname, '__mocks__/@podman-desktop/api.js'),
     },
   },
