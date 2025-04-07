@@ -30,7 +30,6 @@ const config: UserConfig = defineConfig({
   resolve: {
     alias: {
       '/@/': `${join(PACKAGE_ROOT, 'src')}/`,
-      '/@gen/': `${join(PACKAGE_ROOT, 'src-generated')}/`,
     },
   },
   build: {
