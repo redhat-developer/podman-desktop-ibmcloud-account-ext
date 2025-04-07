@@ -158,6 +158,22 @@ describe('init/post construct', () => {
       expect(console.error).toHaveBeenCalledWith('Error monitoring tokens', expect.any(Error));
     });
   });
+
+  it('should handle error during initial monitorTokens in init()', async () => {
+    expect.assertions(2);
+
+    // Spy and force monitorTokens to throw on first call
+    const monitorTokensSpy = vi
+      .spyOn(authenticationProviderManager, 'monitorTokens')
+      .mockRejectedValueOnce(new Error('Initial monitor failure'));
+
+    // Call postConstruct
+    await authenticationProviderManager.postConstruct();
+
+    // Should call monitorTokens and handle the error
+    expect(monitorTokensSpy).toHaveBeenCalledTimes(1);
+    expect(console.error).toHaveBeenCalledWith('Error while the initial monitoring of tokens', expect.any(Error));
+  });
 });
 
 test('destroy', async () => {
@@ -359,5 +375,34 @@ describe('monitorTokens', () => {
     expect(IamSessionRefreshTokenHelper.prototype.refreshToken).not.toHaveBeenCalled();
     expect(authenticationProviderManager.getOnDidChangeSessions().fire).not.toHaveBeenCalled();
     expect(PersistentSessionHelper.prototype.save).toHaveBeenCalledWith([freshSession]);
+  });
+
+  it('should remove session and fire removed event on refresh error', async () => {
+    expect.assertions(4);
+
+    const now = Math.round(Date.now() / 1000);
+    const expiringSession: IAMSession = { session_id: 'fail-session', expiration: now + 10 } as unknown as IAMSession;
+    const convertedSession = { id: 'fail-session' } as unknown as AuthenticationSession;
+
+    authenticationProviderManager.getIamSessions().push(expiringSession);
+
+    vi.mocked(IamSessionRefreshTokenHelper.prototype.refreshToken).mockRejectedValue(new Error('refresh fail'));
+    vi.mocked(IamSessionConverterHelper.prototype.convertToAuthenticationSession).mockReturnValue(convertedSession);
+
+    await authenticationProviderManager.monitorTokens();
+
+    // Should have removed session
+    expect(authenticationProviderManager.getIamSessions()).toHaveLength(0);
+
+    // Should have fired removed event
+    expect(authenticationProviderManager.getOnDidChangeSessions().fire).toHaveBeenCalledWith({
+      removed: [convertedSession],
+    });
+
+    // Should have saved sessions (empty)
+    expect(PersistentSessionHelper.prototype.save).toHaveBeenCalledWith([]);
+
+    // Should log error
+    expect(console.error).toHaveBeenCalledWith('Error refreshing token', expect.any(Error));
   });
 });

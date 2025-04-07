@@ -18,9 +18,10 @@
 
 import type { ExtensionContext } from '@podman-desktop/api';
 import { beforeEach, expect, test, vi } from 'vitest';
-import type { Container } from 'inversify';
+import type { Container, ServiceIdentifier } from 'inversify';
 import { IBMCloudExtension } from './ibmcloud-extension';
 import { AuthenticationProviderManager } from './manager/authentication-provider-manager';
+import { InversifyBinding } from './inject/inversify-binding';
 
 let extensionContextMock: ExtensionContext;
 let ibmCloudExtension: TestIBMCloudExtension;
@@ -95,6 +96,28 @@ test('should log error if deferActivate throws', async () => {
     expect(spyDeferActivate).toHaveBeenCalledWith();
     expect(spyConsoleError).toHaveBeenCalledWith('error in deferActivate', error);
   });
+
+  spyConsoleError.mockRestore();
+});
+
+test('should log error if getAsync for AuthenticationProviderManager throws', async () => {
+  expect.assertions(2);
+
+  const error = new Error('getAsync failure');
+  const spyConsoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+  // Mock the initBindings to return a container with a throwing getAsync
+  const fakeContainer = {
+    getAsync: vi.fn<(serviceIdentifier: ServiceIdentifier) => Promise<unknown>>().mockRejectedValueOnce(error),
+  } as unknown as Container;
+  const initBindingsMock = vi.fn<() => Promise<Container>>().mockResolvedValue(fakeContainer);
+  const spyInitBindings = vi.spyOn(InversifyBinding.prototype, 'initBindings');
+  spyInitBindings.mockImplementation(initBindingsMock);
+
+  await ibmCloudExtension.activate();
+
+  expect(fakeContainer.getAsync).toHaveBeenCalledWith(AuthenticationProviderManager);
+  expect(spyConsoleError).toHaveBeenCalledWith('Error while creating the authentication provider manager', error);
 
   spyConsoleError.mockRestore();
 });

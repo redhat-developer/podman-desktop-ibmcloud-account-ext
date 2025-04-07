@@ -39,7 +39,12 @@ export class IBMCloudExtension {
     this.#inversifyBinding = new InversifyBinding(this.#extensionContext, telemetryLogger);
     this.#container = await this.#inversifyBinding.initBindings();
 
-    this.#authenticationProviderManager = await this.#container.getAsync(AuthenticationProviderManager);
+    try {
+      this.#authenticationProviderManager = await this.getContainer()?.getAsync(AuthenticationProviderManager);
+    } catch (e) {
+      console.error('Error while creating the authentication provider manager', e);
+      return;
+    }
 
     // Perform the registration after the startup to not hold up the startup
     this.deferActivate().catch((e: unknown) => {

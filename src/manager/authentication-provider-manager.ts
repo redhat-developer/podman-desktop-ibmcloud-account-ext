@@ -70,7 +70,11 @@ export class AuthenticationProviderManager {
     this.iamSessions = await this.persistentSessionHelper.restoreSessions();
 
     // Monitor the token expiration
-    await this.monitorTokens();
+    try {
+      await this.monitorTokens();
+    } catch (error: unknown) {
+      console.error('Error while the initial monitoring of tokens', error);
+    }
 
     this.checkTimeout = setInterval(() => {
       this.monitorTokens().catch((error: unknown) => {
@@ -97,7 +101,21 @@ export class AuthenticationProviderManager {
     for (const session of this.iamSessions) {
       const delta = session.expiration - now;
       if (delta < 60) {
-        const updatedSession = await this.iamSessionRefreshTokenHelper.refreshToken(session);
+        let updatedSession: IAMSession;
+        try {
+          updatedSession = await this.iamSessionRefreshTokenHelper.refreshToken(session);
+        } catch (error: unknown) {
+          console.error('Error refreshing token', error);
+          // Remove this session from the list
+          const sessionIndex = this.iamSessions.findIndex(s => s.session_id === session.session_id);
+          if (sessionIndex !== -1) {
+            this.iamSessions.splice(sessionIndex, 1);
+          }
+          // Fire the event to notify the change
+          const authenticationSession = this.iamSessionConverterHelper.convertToAuthenticationSession(session);
+          this._onDidChangeSessions.fire({ removed: [authenticationSession] });
+          continue;
+        }
         // Update the session in the list
         const sessionIndex = this.iamSessions.findIndex(s => s.session_id === session.session_id);
         if (sessionIndex !== -1) {
