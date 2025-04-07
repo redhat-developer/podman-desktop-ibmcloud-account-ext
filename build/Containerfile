@@ -26,6 +26,7 @@ COPY .gitignore /opt/app-root/extension-source/
 COPY *.json /opt/app-root/extension-source/
 COPY src /opt/app-root/extension-source/src
 COPY types /opt/app-root/extension-source/types
+COPY vite*.ts /opt/app-root/extension-source/
 
 # refresh dependencies (if needed)
 # and build the extension
