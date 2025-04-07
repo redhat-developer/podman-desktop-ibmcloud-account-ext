@@ -43,6 +43,7 @@ RUN mkdir /opt/app-root/extension && \
 COPY package.json /opt/app-root/extension/
 COPY LICENSE /opt/app-root/extension/
 COPY README.md /opt/app-root/extension/
+COPY icon.png /opt/app-root/extension/
 
 # Copy the extension to a new image
 FROM scratch
