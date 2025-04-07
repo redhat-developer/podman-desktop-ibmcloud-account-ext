@@ -30,7 +30,7 @@ COPY vite*.ts /opt/app-root/extension-source/
 
 # refresh dependencies (if needed)
 # and build the extension
-RUN pnpm --frozen-lockfile install && \
+RUN pnpm install && \
     pnpm build
 
 # copy output of the build + required files
