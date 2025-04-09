@@ -19,6 +19,7 @@
 import { inject } from 'inversify';
 import type { IAMSession } from '../api/iam-session';
 import { TokenEndpointHelper } from './token-endpoint-helper';
+import type { CloudAccount } from '../api/cloud-account';
 
 /**
  * Helper class for getting a new IAM sessions using the refresh token.
@@ -27,21 +28,25 @@ export class IamSessionRefreshTokenHelper {
   @inject(TokenEndpointHelper)
   private readonly tokenEndpointHelper: TokenEndpointHelper;
 
-  async refreshToken(session: IAMSession): Promise<IAMSession> {
+  async refreshToken(session: IAMSession, cloudAccount?: CloudAccount): Promise<IAMSession> {
     const refreshToken = session.refresh_token;
     if (!refreshToken) {
       throw new Error('No refresh token found');
     }
-    const body = this.createBody(refreshToken);
+    const body = this.createBody(refreshToken, cloudAccount);
 
     // Call the token endpoint with the refresh token
     return this.tokenEndpointHelper.getToken(body);
   }
 
-  protected createBody(refreshToken: string): string {
+  protected createBody(refreshToken: string, cloudAccount?: CloudAccount): string {
     const body = new URLSearchParams();
     body.append('grant_type', 'refresh_token');
     body.append('refresh_token', refreshToken);
+    // Add the account guid if any
+    if (cloudAccount) {
+      body.append('account', cloudAccount.guid);
+    }
     return body.toString();
   }
 }

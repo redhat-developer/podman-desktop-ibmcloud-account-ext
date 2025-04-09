@@ -25,12 +25,14 @@ import {
   EventEmitter,
   type ExtensionContext,
   type AuthenticationProvider,
+  window,
 } from '@podman-desktop/api';
 import { PasscodeEndpointHelper } from '/@/helper/passcode-endpoint-helper';
 import { IamSessionConverterHelper } from '/@/helper/iam-session-converter-helper';
 import type { IAMSession } from '/@/api/iam-session';
 import { PersistentSessionHelper } from '/@/helper/persistent-session-helper';
 import { IamSessionRefreshTokenHelper } from '/@/helper/iam-session-refresh-token-helper';
+import { AccountSelectHelper } from '../helper/account-select-helper';
 
 /**
  * Manager for the authentication provider.
@@ -56,6 +58,9 @@ export class AuthenticationProviderManager {
 
   @inject(IamSessionRefreshTokenHelper)
   private readonly iamSessionRefreshTokenHelper: IamSessionRefreshTokenHelper;
+
+  @inject(AccountSelectHelper)
+  private readonly accountSelectHelper: AccountSelectHelper;
 
   protected _onDidChangeSessions = new EventEmitter<AuthenticationProviderAuthenticationSessionsChangeEvent>();
 
@@ -133,7 +138,32 @@ export class AuthenticationProviderManager {
   // Do not use provided scopes for creating a session
   protected async createSession(_scopes: string[]): Promise<AuthenticationSession> {
     // Open the browser with the passcode URL
-    const iamSession = await this.passcodeEndpointHelper.authenticate();
+    let iamSession = await this.passcodeEndpointHelper.authenticate();
+
+    // List accounts from this session
+    const accounts = await this.accountSelectHelper.getAccounts(iamSession);
+    // Check if there are more than one account
+    if (accounts.length > 1) {
+      // Show a list of accounts to the user
+      const responseAccount = await window.showQuickPick(
+        accounts.map(account => ({
+          label: account.name,
+          description: account.guid,
+          data: account,
+        })),
+        {
+          placeHolder: 'Select an account',
+          canPickMany: false,
+        },
+      );
+      if (!responseAccount) {
+        throw new Error('No account selected');
+      }
+      const selectedAccount = responseAccount.data;
+
+      // Get token for this account
+      iamSession = await this.iamSessionRefreshTokenHelper.refreshToken(iamSession, selectedAccount);
+    }
 
     const authenticationSession = this.iamSessionConverterHelper.convertToAuthenticationSession(iamSession);
 
