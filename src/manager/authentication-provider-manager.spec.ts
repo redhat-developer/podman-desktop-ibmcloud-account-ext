@@ -27,18 +27,22 @@ import {
   type TelemetryLogger,
   type TelemetryTrustedValue,
   authentication,
+  window,
 } from '@podman-desktop/api';
 import { PasscodeEndpointHelper } from '../helper/passcode-endpoint-helper';
 import { IamSessionConverterHelper } from '../helper/iam-session-converter-helper';
 import { PersistentSessionHelper } from '../helper/persistent-session-helper';
 import { IamSessionRefreshTokenHelper } from '../helper/iam-session-refresh-token-helper';
 import type { IAMSession } from '../api/iam-session';
+import { AccountSelectHelper } from '/@/helper/account-select-helper';
+import type { CloudAccount } from '../api/cloud-account';
 
 vi.mock(import('node:path'));
-vi.mock(import('../helper/passcode-endpoint-helper'));
-vi.mock(import('../helper/iam-session-converter-helper'));
-vi.mock(import('../helper/persistent-session-helper'));
-vi.mock(import('../helper/iam-session-refresh-token-helper'));
+vi.mock(import('/@/helper/account-select-helper'));
+vi.mock(import('/@/helper/passcode-endpoint-helper'));
+vi.mock(import('/@/helper/iam-session-converter-helper'));
+vi.mock(import('/@/helper/persistent-session-helper'));
+vi.mock(import('/@/helper/iam-session-refresh-token-helper'));
 vi.useFakeTimers();
 
 let authenticationProviderManager: TestAuthenticationProviderManager;
@@ -98,6 +102,7 @@ beforeEach(async () => {
 
   container.bind(TelemetryLoggerSymbol).toConstantValue(telemetryLoggerMock);
   container.bind(ExtensionContextSymbol).toConstantValue(extensionContextMock);
+  container.bind<AccountSelectHelper>(AccountSelectHelper).toSelf().inSingletonScope();
   container.bind<PasscodeEndpointHelper>(PasscodeEndpointHelper).toSelf().inSingletonScope();
   container.bind<IamSessionConverterHelper>(IamSessionConverterHelper).toSelf().inSingletonScope();
   container.bind<PersistentSessionHelper>(PersistentSessionHelper).toSelf().inSingletonScope();
@@ -194,29 +199,104 @@ test('destroy', async () => {
   expect(PersistentSessionHelper.prototype.save).toHaveBeenCalledWith(expect.any(Array));
 });
 
-test('createSession', async () => {
-  expect.assertions(5);
+describe('createSession', async () => {
+  it('create session without accounts', async () => {
+    expect.assertions(5);
 
-  const dummyIamSession: IAMSession = {
-    session_id: '123id',
-  } as unknown as IAMSession;
+    const dummyIamSession: IAMSession = {
+      session_id: '123id',
+    } as unknown as IAMSession;
 
-  const podmanDesktopSession: AuthenticationSession = {} as unknown as AuthenticationSession;
+    const podmanDesktopSession: AuthenticationSession = {} as unknown as AuthenticationSession;
 
-  const onDidChangeSessions = authenticationProviderManager.getOnDidChangeSessions();
-  vi.mocked(PasscodeEndpointHelper.prototype.authenticate).mockResolvedValue(dummyIamSession);
-  vi.mocked(IamSessionConverterHelper.prototype.convertToAuthenticationSession).mockReturnValue(podmanDesktopSession);
+    const onDidChangeSessions = authenticationProviderManager.getOnDidChangeSessions();
+    vi.mocked(PasscodeEndpointHelper.prototype.authenticate).mockResolvedValue(dummyIamSession);
+    vi.mocked(IamSessionConverterHelper.prototype.convertToAuthenticationSession).mockReturnValue(podmanDesktopSession);
+    vi.mocked(AccountSelectHelper.prototype.getAccounts).mockResolvedValue([]);
 
-  const result = await authenticationProviderManager.createSession(['test']);
+    const result = await authenticationProviderManager.createSession(['test']);
 
-  expect(PasscodeEndpointHelper.prototype.authenticate).toHaveBeenCalledWith();
-  expect(IamSessionConverterHelper.prototype.convertToAuthenticationSession).toHaveBeenCalledWith(dummyIamSession);
-  expect(result).toStrictEqual(podmanDesktopSession);
+    expect(PasscodeEndpointHelper.prototype.authenticate).toHaveBeenCalledWith();
+    expect(IamSessionConverterHelper.prototype.convertToAuthenticationSession).toHaveBeenCalledWith(dummyIamSession);
+    expect(result).toStrictEqual(podmanDesktopSession);
 
-  expect(authenticationProviderManager.getIamSessions()).toStrictEqual([dummyIamSession]);
+    expect(authenticationProviderManager.getIamSessions()).toStrictEqual([dummyIamSession]);
 
-  expect(onDidChangeSessions.fire).toHaveBeenCalledWith({
-    added: [podmanDesktopSession],
+    expect(onDidChangeSessions.fire).toHaveBeenCalledWith({
+      added: [podmanDesktopSession],
+    });
+  });
+
+  it('create session with multiple accounts', async () => {
+    expect.assertions(1);
+
+    const dummyIamSession: IAMSession = {
+      session_id: '123id',
+    } as unknown as IAMSession;
+
+    const podmanDesktopSession: AuthenticationSession = {} as unknown as AuthenticationSession;
+
+    vi.mocked(PasscodeEndpointHelper.prototype.authenticate).mockResolvedValue(dummyIamSession);
+    vi.mocked(IamSessionConverterHelper.prototype.convertToAuthenticationSession).mockReturnValue(podmanDesktopSession);
+    const account1 = {
+      guid: 'test-guid',
+      name: 'test-name',
+      ibmid: 'test-ibmid',
+    };
+    vi.mocked(AccountSelectHelper.prototype.getAccounts).mockResolvedValue([
+      account1,
+      {
+        guid: 'test-guid-2',
+        name: 'test-name-2',
+        ibmid: 'test-ibmid-2',
+      },
+    ]);
+
+    // Mock showQuickPick to return the first account
+    vi.mocked(window.showQuickPick<{ label: string; description: string; data: CloudAccount }>).mockResolvedValue({
+      label: 'test-name',
+      description: 'test-guid',
+      data: account1,
+    });
+
+    await authenticationProviderManager.createSession(['test']);
+
+    expect(IamSessionRefreshTokenHelper.prototype.refreshToken).toHaveBeenCalledWith(dummyIamSession, account1);
+  });
+
+  it('create session with multiple accounts and no selecting account', async () => {
+    expect.assertions(2);
+
+    const dummyIamSession: IAMSession = {
+      session_id: '123id',
+    } as unknown as IAMSession;
+
+    const podmanDesktopSession: AuthenticationSession = {} as unknown as AuthenticationSession;
+
+    vi.mocked(PasscodeEndpointHelper.prototype.authenticate).mockResolvedValue(dummyIamSession);
+    vi.mocked(IamSessionConverterHelper.prototype.convertToAuthenticationSession).mockReturnValue(podmanDesktopSession);
+    const account1 = {
+      guid: 'test-guid',
+      name: 'test-name',
+      ibmid: 'test-ibmid',
+    };
+    vi.mocked(AccountSelectHelper.prototype.getAccounts).mockResolvedValue([
+      account1,
+      {
+        guid: 'test-guid-2',
+        name: 'test-name-2',
+        ibmid: 'test-ibmid-2',
+      },
+    ]);
+
+    // Mock showQuickPick to return the first account
+    vi.mocked(window.showQuickPick<{ label: string; description: string; data: CloudAccount }>).mockResolvedValue(
+      undefined,
+    );
+
+    await expect(() => authenticationProviderManager.createSession(['test'])).rejects.toThrow('No account selected');
+
+    expect(IamSessionRefreshTokenHelper.prototype.refreshToken).not.toHaveBeenCalled();
   });
 });
 

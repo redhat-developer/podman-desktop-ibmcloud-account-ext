@@ -24,8 +24,10 @@ import { IamSessionRefreshTokenHelper } from './iam-session-refresh-token-helper
 import { PasscodeEndpointHelper } from './passcode-endpoint-helper';
 import { PersistentSessionHelper } from './persistent-session-helper';
 import { TokenEndpointHelper } from './token-endpoint-helper';
+import { AccountSelectHelper } from './account-select-helper';
 
 const helpersModule = new ContainerModule(options => {
+  options.bind<AccountSelectHelper>(AccountSelectHelper).toSelf().inSingletonScope();
   options.bind<IamSessionAccessTokenHelper>(IamSessionAccessTokenHelper).toSelf().inSingletonScope();
   options.bind<IamSessionConverterHelper>(IamSessionConverterHelper).toSelf().inSingletonScope();
   options.bind<IamSessionRefreshTokenHelper>(IamSessionRefreshTokenHelper).toSelf().inSingletonScope();
