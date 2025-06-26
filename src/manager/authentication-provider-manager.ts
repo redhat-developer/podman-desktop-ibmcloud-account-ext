@@ -101,7 +101,7 @@ export class AuthenticationProviderManager {
 
   protected async monitorTokens(): Promise<void> {
     // Monitor the token expiration
-    const now = Math.round(new Date().getTime() / 1000);
+    const now = Math.round(Date.now() / 1000);
     // Check if the token is expired or within 60 seconds of expiration
     for (const session of this.iamSessions) {
       const delta = session.expiration - now;
