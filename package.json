@@ -18,7 +18,7 @@
     "format:check": "biome format",
     "format:fix": "biome format --write",
     "lint:check": "eslint . && biome lint",
-    "lint:fix": "eslint . --fix  && biome lint --fix",
+    "lint:fix": "eslint . --fix && biome lint --fix",
     "watch": "vite build -w",
     "typecheck": "tsc --noEmit"
   },

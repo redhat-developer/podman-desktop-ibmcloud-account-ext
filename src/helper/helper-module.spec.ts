@@ -23,7 +23,7 @@ import { ExtensionContextSymbol, TelemetryLoggerSymbol } from '/@/inject/symbol'
 import type { ExtensionContext, TelemetryLogger } from '@podman-desktop/api';
 import { IamSessionAccessTokenHelper } from './iam-session-access-token-helper';
 
-describe('helpersModule', () => {
+describe('helper-module', () => {
   let container: Container;
 
   beforeEach(async () => {
