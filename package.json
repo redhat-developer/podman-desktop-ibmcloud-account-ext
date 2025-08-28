@@ -23,7 +23,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "inversify": "^7.9.0",
+    "inversify": "^7.9.1",
     "jwt-decode": "^4.0.0",
     "zod": "^4.1.3"
   },
