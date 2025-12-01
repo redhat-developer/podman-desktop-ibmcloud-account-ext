@@ -52,8 +52,8 @@ importers:
         specifier: ^3.2.4
         version: 3.2.4(vitest@3.2.4(@types/node@22.19.1)(jiti@2.6.0)(yaml@2.8.1))
       '@vitest/eslint-plugin':
-        specifier: ^1.5.0
-        version: 1.5.0(eslint@9.39.1(jiti@2.6.0))(typescript@5.9.3)(vitest@3.2.4(@types/node@22.19.1)(jiti@2.6.0)(yaml@2.8.1))
+        specifier: ^1.5.1
+        version: 1.5.1(eslint@9.39.1(jiti@2.6.0))(typescript@5.9.3)(vitest@3.2.4(@types/node@22.19.1)(jiti@2.6.0)(yaml@2.8.1))
       autoprefixer:
         specifier: ^10.4.22
         version: 10.4.22(postcss@8.5.6)
@@ -956,8 +956,8 @@ packages:
       '@vitest/browser':
         optional: true
 
-  '@vitest/eslint-plugin@1.5.0':
-    resolution: {integrity: sha512-j3uuIAPTYWYnSit9lspb08/EKsxEmGqjQf+Wpb1DQkxc+mMkhL58ZknDCgjYhY4Zu76oxZ0hVWTHlmRW0mJq5w==}
+  '@vitest/eslint-plugin@1.5.1':
+    resolution: {integrity: sha512-t49CNERe/YadnLn90NTTKJLKzs99xBkXElcoUTLodG6j1G0Q7jy3mXqqiHd3N5aryG2KkgOg4UAoGwgwSrZqKQ==}
     engines: {node: '>=18'}
     peerDependencies:
       eslint: '>=8.57.0'
@@ -3611,7 +3611,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/eslint-plugin@1.5.0(eslint@9.39.1(jiti@2.6.0))(typescript@5.9.3)(vitest@3.2.4(@types/node@22.19.1)(jiti@2.6.0)(yaml@2.8.1))':
+  '@vitest/eslint-plugin@1.5.1(eslint@9.39.1(jiti@2.6.0))(typescript@5.9.3)(vitest@3.2.4(@types/node@22.19.1)(jiti@2.6.0)(yaml@2.8.1))':
     dependencies:
       '@typescript-eslint/scope-manager': 8.48.0
       '@typescript-eslint/utils': 8.48.0(eslint@9.39.1(jiti@2.6.0))(typescript@5.9.3)
