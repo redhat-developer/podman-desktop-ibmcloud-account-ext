@@ -58,8 +58,8 @@ importers:
         specifier: ^10.4.23
         version: 10.4.23(postcss@8.5.6)
       commitlint:
-        specifier: ^20.3.0
-        version: 20.3.0(@types/node@22.19.5)(typescript@5.9.3)
+        specifier: ^20.3.1
+        version: 20.3.1(@types/node@22.19.5)(typescript@5.9.3)
       concurrently:
         specifier: ^9.2.1
         version: 9.2.1
@@ -262,10 +262,6 @@ packages:
 
   '@commitlint/top-level@20.0.0':
     resolution: {integrity: sha512-drXaPSP2EcopukrUXvUXmsQMu3Ey/FuJDc/5oiW4heoCfoE5BdLQyuc7veGeE3aoQaTVqZnh4D5WTWe2vefYKg==}
-    engines: {node: '>=v18'}
-
-  '@commitlint/types@20.2.0':
-    resolution: {integrity: sha512-KTy0OqRDLR5y/zZMnizyx09z/rPlPC/zKhYgH8o/q6PuAjoQAKlRfY4zzv0M64yybQ//6//4H1n14pxaLZfUnA==}
     engines: {node: '>=v18'}
 
   '@commitlint/types@20.3.1':
@@ -1229,8 +1225,8 @@ packages:
     resolution: {integrity: sha512-TywoWNNRbhoD0BXs1P3ZEScW8W5iKrnbithIl0YH+uCmBd0QpPOA8yc82DS3BIE5Ma6FnBVUsJ7wVUDz4dvOWQ==}
     engines: {node: '>=20'}
 
-  commitlint@20.3.0:
-    resolution: {integrity: sha512-TaGMjgqJrqAZK0wfWwnZxGvAUkWBvrj79lK3H8CT2+jMrd5lHf3fRb4usDWa5qcaXUvEdzVG6PAesRVuIYXr5w==}
+  commitlint@20.3.1:
+    resolution: {integrity: sha512-E5VhXRrKjVGpehHOhTzSBwI3x3Uefnf5KSPggiJfKUMFyXZetZimVMEJYqa66JPRLDF/Ewgw0qbWXXz+eqdM1Q==}
     engines: {node: '>=v18'}
     hasBin: true
 
@@ -2993,11 +2989,6 @@ snapshots:
     dependencies:
       find-up: 7.0.0
 
-  '@commitlint/types@20.2.0':
-    dependencies:
-      '@types/conventional-commits-parser': 5.0.2
-      chalk: 5.6.2
-
   '@commitlint/types@20.3.1':
     dependencies:
       '@types/conventional-commits-parser': 5.0.2
@@ -3909,10 +3900,10 @@ snapshots:
 
   commander@14.0.2: {}
 
-  commitlint@20.3.0(@types/node@22.19.5)(typescript@5.9.3):
+  commitlint@20.3.1(@types/node@22.19.5)(typescript@5.9.3):
     dependencies:
       '@commitlint/cli': 20.3.1(@types/node@22.19.5)(typescript@5.9.3)
-      '@commitlint/types': 20.2.0
+      '@commitlint/types': 20.3.1
     transitivePeerDependencies:
       - '@types/node'
       - typescript
