@@ -35,7 +35,7 @@ describe('helper-module', () => {
     container.bind(TelemetryLoggerSymbol).toConstantValue({} as TelemetryLogger);
 
     // Load the helpersModule bindings into the container
-    await container.load(helpersModule);
+    await container.loadAsync(helpersModule);
   });
 
   it('should bind ClusterSearchHelper as a singleton', () => {
