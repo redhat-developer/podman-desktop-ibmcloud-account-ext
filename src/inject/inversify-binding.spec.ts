@@ -53,8 +53,8 @@ describe('inversifyBinding', () => {
     expect(vi.mocked(Container.prototype.bind)).toHaveBeenCalledWith(TelemetryLoggerSymbol);
 
     // Expect load of modules
-    expect(vi.mocked(Container.prototype.load)).toHaveBeenCalledWith(helpersModule);
-    expect(vi.mocked(Container.prototype.load)).toHaveBeenCalledWith(managersModule);
+    expect(vi.mocked(Container.prototype.loadAsync)).toHaveBeenCalledWith(helpersModule);
+    expect(vi.mocked(Container.prototype.loadAsync)).toHaveBeenCalledWith(managersModule);
   });
 
   it('should dispose of the container', async () => {
@@ -66,6 +66,6 @@ describe('inversifyBinding', () => {
     await inversifyBinding.dispose();
 
     // Instances gone
-    expect(container.unbindAll).toHaveBeenCalledWith();
+    expect(container.unbindAllAsync).toHaveBeenCalledWith();
   });
 });

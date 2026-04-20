@@ -42,8 +42,8 @@ export class InversifyBinding {
     this.#container.bind(ExtensionContextSymbol).toConstantValue(this.#extensionContext);
     this.#container.bind(TelemetryLoggerSymbol).toConstantValue(this.#telemetryLogger);
 
-    await this.#container.load(managersModule);
-    await this.#container.load(helpersModule);
+    await this.#container.loadAsync(managersModule);
+    await this.#container.loadAsync(helpersModule);
 
     // Get authentication provider manager
     await this.#container.getAsync(AuthenticationProviderManager);
@@ -52,7 +52,7 @@ export class InversifyBinding {
 
   async dispose(): Promise<void> {
     if (this.#container) {
-      await this.#container.unbindAll();
+      await this.#container.unbindAllAsync();
     }
   }
 }
