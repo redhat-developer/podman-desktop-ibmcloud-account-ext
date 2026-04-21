@@ -16,7 +16,7 @@
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
 import { afterEach, beforeEach, describe, expect, test, vi, it } from 'vitest';
-import { Container, injectFromBase, injectable, postConstruct, preDestroy } from 'inversify';
+import { Container, injectFromBase, injectable } from 'inversify';
 import { AuthenticationProviderManager } from './authentication-provider-manager';
 import { ExtensionContextSymbol, TelemetryLoggerSymbol } from '../inject/symbol';
 import {
@@ -58,14 +58,10 @@ const extensionContextMock: ExtensionContext = {
 @injectable()
 @injectFromBase()
 class TestAuthenticationProviderManager extends AuthenticationProviderManager {
-  // Call the parent postConstruct from the parent class
-  @postConstruct()
   public async postConstruct(): Promise<void> {
     await super.init();
   }
 
-  // Call the parent preDestroy from the parent class
-  @preDestroy()
   public async preDestroy(): Promise<void> {
     await super.dispose();
   }
@@ -122,7 +118,7 @@ afterEach(async () => {
   // Clear all timers
   vi.clearAllTimers();
 
-  await container.unbindAll();
+  await container.unbindAllAsync();
 });
 
 describe('init/post construct', () => {
