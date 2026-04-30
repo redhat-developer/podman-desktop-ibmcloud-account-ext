@@ -25,7 +25,7 @@
   "dependencies": {
     "inversify": "^8.1.0",
     "jwt-decode": "^4.0.0",
-    "zod": "^4.3.6"
+    "zod": "^4.4.1"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.13",
