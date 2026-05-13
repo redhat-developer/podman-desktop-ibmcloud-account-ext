@@ -67,8 +67,8 @@ importers:
         specifier: ^10.5.0
         version: 10.5.0(postcss@8.5.14)
       commitlint:
-        specifier: ^21.0.0
-        version: 21.0.0(@types/node@22.19.19)(conventional-commits-parser@6.4.0)(typescript@5.9.3)
+        specifier: ^21.0.1
+        version: 21.0.1(@types/node@22.19.19)(conventional-commits-parser@6.4.0)(typescript@5.9.3)
       concurrently:
         specifier: ^9.2.1
         version: 9.2.1
@@ -271,10 +271,6 @@ packages:
 
   '@commitlint/top-level@21.0.1':
     resolution: {integrity: sha512-4esUYqzY7K0FCgcJ/1xWEZekV7Ch4yZT1+xjEb7KzqbJ05XEkxHVsTfC8ADKNNtlCE2pj98KEbPGZWw9WwEnVw==}
-    engines: {node: '>=22.12.0'}
-
-  '@commitlint/types@21.0.0':
-    resolution: {integrity: sha512-6nEz+M7I90iix4sviA8NLwskOuyt0M98KUU2aYgiKbn46jMSxUm1l2ACtzRd9ec+y38aKyJhW4Fp6NW0z35kJQ==}
     engines: {node: '>=22.12.0'}
 
   '@commitlint/types@21.0.1':
@@ -1390,8 +1386,8 @@ packages:
   color-name@1.1.4:
     resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
 
-  commitlint@21.0.0:
-    resolution: {integrity: sha512-6C8Jte4sgIExA8eSPWDwtmjZoPbIuN0ckyG9Km3N5HZQcNKxjYGh6bbDjrYL360pAwu2YFTg/dqp9DdOxEcR9g==}
+  commitlint@21.0.1:
+    resolution: {integrity: sha512-FC5Mx2Hmvoe3fBQzE2FdwtfACj1hf5lIwK4dfX5Syc3FC3bXFiuWvHsO0Dl65iTSaEpZwe4eOpVn5ZIlQkVCuQ==}
     engines: {node: '>=22.12.0'}
     hasBin: true
 
@@ -3209,11 +3205,6 @@ snapshots:
     dependencies:
       escalade: 3.2.0
 
-  '@commitlint/types@21.0.0':
-    dependencies:
-      conventional-commits-parser: 6.4.0
-      picocolors: 1.1.1
-
   '@commitlint/types@21.0.1':
     dependencies:
       conventional-commits-parser: 6.4.0
@@ -4249,10 +4240,10 @@ snapshots:
 
   color-name@1.1.4: {}
 
-  commitlint@21.0.0(@types/node@22.19.19)(conventional-commits-parser@6.4.0)(typescript@5.9.3):
+  commitlint@21.0.1(@types/node@22.19.19)(conventional-commits-parser@6.4.0)(typescript@5.9.3):
     dependencies:
       '@commitlint/cli': 21.0.1(@types/node@22.19.19)(conventional-commits-parser@6.4.0)(typescript@5.9.3)
-      '@commitlint/types': 21.0.0
+      '@commitlint/types': 21.0.1
     transitivePeerDependencies:
       - '@types/node'
       - conventional-commits-filter
