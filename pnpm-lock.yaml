@@ -50,8 +50,8 @@ importers:
         specifier: ^10.0.1
         version: 10.0.1(eslint@10.8.0(jiti@2.6.1))
       '@podman-desktop/api':
-        specifier: ^1.29.0
-        version: 1.29.0
+        specifier: ^1.29.1
+        version: 1.29.1
       '@types/node':
         specifier: ^22.20.1
         version: 22.20.1
@@ -633,8 +633,8 @@ packages:
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
 
-  '@podman-desktop/api@1.29.0':
-    resolution: {integrity: sha512-atFcg3OrOEBPuPzvkclbUCAoMVfSg+hqexNcE5Z/YJ5f7PakTUS6BpcVTG/bL3l66N2uGdYWes/tM0W5xdSLWA==}
+  '@podman-desktop/api@1.29.1':
+    resolution: {integrity: sha512-UtCY2t5hVLz5pHXSV5DmQESPLUqSxDgKhJfqlQ4GO7L0x/fQdaX22KGbuzOEUSs1KzB0nwWNB3ylaTcE/OBdZA==}
 
   '@rolldown/binding-android-arm64@1.2.1':
     resolution: {integrity: sha512-02hOeOSryYxVrOIphmLAsqnCJWxwlzFk+pEt/N/i6OgT3lShHO7xGCU5cpgchRDHboAEbSjzgGh+O/u1GswQmA==}
@@ -3466,7 +3466,7 @@ snapshots:
   '@pkgjs/parseargs@0.11.0':
     optional: true
 
-  '@podman-desktop/api@1.29.0': {}
+  '@podman-desktop/api@1.29.1': {}
 
   '@rolldown/binding-android-arm64@1.2.1':
     optional: true
