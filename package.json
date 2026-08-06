@@ -53,7 +53,7 @@
     "eslint-plugin-simple-import-sort": "^14.0.0",
     "eslint-plugin-sonarjs": "^4.2.0",
     "eslint-plugin-unicorn": "^71.1.0",
-    "globals": "^17.8.0",
+    "globals": "^17.9.0",
     "husky": "^9.1.7",
     "lint-staged": "^17.3.0",
     "typescript": "5.9.3",
