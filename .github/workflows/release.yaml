@@ -125,7 +125,7 @@ jobs:
 
       - name: build builder image
         id: builder-image
-        uses: redhat-actions/buildah-build@v2
+        uses: redhat-actions/buildah-build@v3
         with:
           image: podman-desktop-ibmcloud-account-ext-builder
           tags: latest ${{ needs.tag.outputs.extVersion }}
@@ -176,7 +176,7 @@ jobs:
 
       - name: build extension image
         id: extension-image
-        uses: redhat-actions/buildah-build@v2
+        uses: redhat-actions/buildah-build@v3
         with:
           image: podman-desktop-ibmcloud-account-ext
           tags: latest ${{ needs.tag.outputs.extVersion }}
