@@ -30,8 +30,20 @@ let inversifyBinding: InversifyBinding;
 const extensionContextMock = {} as ExtensionContext;
 const telemetryLoggerMock = {} as TelemetryLogger;
 
-// Mock inversify
-vi.mock(import('inversify'));
+// Partially mock inversify — only mock Container, keep real decorators (injectable, inject, etc.)
+// so that @injectable() on imported classes doesn't fail at module load time.
+vi.mock(import('inversify'), async importOriginal => {
+  const actual = await importOriginal();
+  const MockContainer = vi.fn();
+  MockContainer.prototype.bind = vi.fn();
+  MockContainer.prototype.loadAsync = vi.fn();
+  MockContainer.prototype.getAsync = vi.fn();
+  MockContainer.prototype.unbindAllAsync = vi.fn();
+  return {
+    ...actual,
+    Container: MockContainer,
+  };
+});
 
 describe('inversifyBinding', () => {
   beforeEach(() => {
@@ -67,5 +79,10 @@ describe('inversifyBinding', () => {
 
     // Instances gone
     expect(container.unbindAllAsync).toHaveBeenCalledWith();
+  });
+
+  it('should not call unbindAllAsync if the container is not initialized', async () => {
+    expect.assertions(1);
+    await expect(inversifyBinding.dispose()).resolves.not.toThrow();
   });
 });
