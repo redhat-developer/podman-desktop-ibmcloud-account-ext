@@ -27,7 +27,6 @@ import { FlatCompat } from '@eslint/eslintrc';
 import unicorn from 'eslint-plugin-unicorn';
 import noNull from 'eslint-plugin-no-null';
 import sonarjs from 'eslint-plugin-sonarjs';
-import etc from 'eslint-plugin-etc';
 import redundantUndefined from 'eslint-plugin-redundant-undefined';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import vitest from '@vitest/eslint-plugin';
@@ -60,16 +59,13 @@ export default [
   ...typescriptLint.configs.recommended,
   sonarjs.configs.recommended,
   vitest.configs.all,
-  ...fixupConfigRules(
-    compat.extends('plugin:import/recommended', 'plugin:import/typescript', 'plugin:etc/recommended'),
-  ),
+  ...fixupConfigRules(compat.extends('plugin:import/recommended', 'plugin:import/typescript')),
   {
     plugins: {
       // compliant v9 plug-ins
       unicorn,
       vitest,
       // non-compliant v9 plug-ins
-      etc: fixupPluginRules(etc),
       import: fixupPluginRules(importPlugin),
       'no-null': fixupPluginRules(noNull),
       'redundant-undefined': fixupPluginRules(redundantUndefined),
@@ -128,6 +124,7 @@ export default [
 
       // unicorn custom rules
       'unicorn/prefer-node-protocol': 'error',
+      'unicorn/no-array-sort': 'error',
       'no-null/no-null': 'error',
       'sonarjs/no-empty-function': 'off',
       'sonarjs/deprecation': 'off',
