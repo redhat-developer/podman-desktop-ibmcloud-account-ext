@@ -31,7 +31,7 @@ const extensionContextMock = {} as ExtensionContext;
 const telemetryLoggerMock = {} as TelemetryLogger;
 
 // Partially mock inversify — only mock Container, keep real decorators (injectable, inject, etc.)
-// so that @injectable() on imported classes doesn't fail at module load time.
+// So that @injectable() on imported classes doesn't fail at module load time.
 vi.mock(import('inversify'), async importOriginal => {
   const actual = await importOriginal();
   const MockContainer = vi.fn();
