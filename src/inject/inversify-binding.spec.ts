@@ -30,16 +30,17 @@ let inversifyBinding: InversifyBinding;
 const extensionContextMock = {} as ExtensionContext;
 const telemetryLoggerMock = {} as TelemetryLogger;
 
-// Mock inversify
-vi.mock(import('inversify'));
-
 describe('inversifyBinding', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     inversifyBinding = new InversifyBinding(extensionContextMock, telemetryLoggerMock);
-    vi.mocked(Container.prototype.bind).mockReturnValue({
+    // Spy on Container only: automocking 'inversify' would also mock the @injectable() decorators
+    vi.spyOn(Container.prototype, 'bind').mockReturnValue({
       toConstantValue: vi.fn<(value: unknown) => BindWhenOnFluentSyntax<unknown>>(),
     } as unknown as ReturnType<typeof Container.prototype.bind>);
+    vi.spyOn(Container.prototype, 'loadAsync').mockResolvedValue(undefined);
+    vi.spyOn(Container.prototype, 'getAsync').mockResolvedValue(undefined);
+    vi.spyOn(Container.prototype, 'unbindAllAsync').mockResolvedValue(undefined);
   });
 
   it('should initialize bindings correctly', async () => {
@@ -67,5 +68,13 @@ describe('inversifyBinding', () => {
 
     // Instances gone
     expect(container.unbindAllAsync).toHaveBeenCalledWith();
+  });
+
+  it('should not fail to dispose when bindings are not initialized', async () => {
+    expect.assertions(1);
+
+    await inversifyBinding.dispose();
+
+    expect(Container.prototype.unbindAllAsync).not.toHaveBeenCalled();
   });
 });

@@ -1,5 +1,5 @@
 import type { ExtensionContext } from '@podman-desktop/api';
-import { beforeEach, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import { activate, deactivate } from './main';
 import { IBMCloudExtension } from './ibmcloud-extension';
 
@@ -13,6 +13,10 @@ beforeEach(() => {
 
   // Create a mock for the ExtensionContext
   extensionContextMock = {} as ExtensionContext;
+});
+
+afterEach(() => {
+  vi.unstubAllEnvs();
 });
 
 test('should initialize and activate the IBM Cloud Extension when activate is called', async () => {
@@ -49,4 +53,16 @@ test('should set ibmCloudExtension to undefined after deactivate is called', asy
 
   expect(global).toHaveProperty('ibmCloudExtension');
   expect((global as Record<string, unknown>).ibmCloudExtension).toBeUndefined();
+});
+
+test('should not expose ibmCloudExtension outside of tests', async () => {
+  expect.assertions(1);
+
+  vi.stubEnv('NODE_ENV', 'production');
+  const definePropertySpy = vi.spyOn(Object, 'defineProperty');
+  vi.resetModules();
+
+  await import('./main');
+
+  expect(definePropertySpy).not.toHaveBeenCalledWith(global, 'ibmCloudExtension', expect.anything());
 });
