@@ -18,8 +18,11 @@
 import { join, resolve } from 'node:path';
 import { defineConfig } from 'vitest/config';
 
-// DefineWorkspace provides a nice type hinting DX
 export default defineConfig({
+  // No design:type metadata in tests: inversify uses explicit @inject() tokens,
+  // And the generated `typeof X === 'undefined' ? Object : X` counts as uncovered branches in vitest v4+.
+  // Spread so it also type-checks with vitest v3 (bundled vite 7 has no 'oxc' option, it is ignored there)
+  ...{ oxc: { decorator: { legacy: true, emitDecoratorMetadata: false } } },
   resolve: {
     alias: {
       '/@/': `${join(__dirname, 'src')}/`,
@@ -38,7 +41,7 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['lcov', 'text'],
-      extension: '.ts',
+      include: ['src/**/*.ts'],
       thresholds: {
         lines: 100,
         functions: 100,

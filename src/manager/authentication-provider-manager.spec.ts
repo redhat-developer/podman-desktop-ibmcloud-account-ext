@@ -489,4 +489,43 @@ describe('monitorTokens', () => {
     // Should log error
     expect(console.error).toHaveBeenCalledWith('Error refreshing token', expect.any(Error));
   });
+
+  it('should not re-add a session removed while it was being refreshed', async () => {
+    expect.assertions(2);
+
+    const now = Math.round(Date.now() / 1000);
+    const expiringSession = { session_id: 'removed', expiration: now + 30 } as unknown as IAMSession;
+    const refreshedSession = { session_id: 'removed', expiration: now + 3600 } as unknown as IAMSession;
+
+    authenticationProviderManager.getIamSessions().push(expiringSession);
+    vi.mocked(IamSessionRefreshTokenHelper.prototype.refreshToken).mockImplementation(async () => {
+      // Session removed (e.g. logout) during the refresh
+      authenticationProviderManager.getIamSessions().length = 0;
+      return refreshedSession;
+    });
+
+    await authenticationProviderManager.monitorTokens();
+
+    expect(authenticationProviderManager.getIamSessions()).toHaveLength(0);
+    expect(PersistentSessionHelper.prototype.save).toHaveBeenCalledWith([]);
+  });
+
+  it('should not remove another session when a session removed during refresh fails', async () => {
+    expect.assertions(2);
+
+    const now = Math.round(Date.now() / 1000);
+    const expiringSession = { session_id: 'removed', expiration: now + 30 } as unknown as IAMSession;
+
+    authenticationProviderManager.getIamSessions().push(expiringSession);
+    vi.mocked(IamSessionRefreshTokenHelper.prototype.refreshToken).mockImplementation(async () => {
+      // Session removed (e.g. logout) during the refresh
+      authenticationProviderManager.getIamSessions().length = 0;
+      throw new Error('refresh fail');
+    });
+
+    await authenticationProviderManager.monitorTokens();
+
+    expect(authenticationProviderManager.getIamSessions()).toHaveLength(0);
+    expect(PersistentSessionHelper.prototype.save).toHaveBeenCalledWith([]);
+  });
 });
