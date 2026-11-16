@@ -15,7 +15,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-FROM registry.access.redhat.com/ubi10/nodejs-24-minimal:10.1-1766060610 AS builder
+FROM registry.access.redhat.com/ubi10/nodejs-24-minimal:1791463197@sha256:498ccfc43f6fe349a4d87db6af6d83ab420e9450f3800140cdc90c290dcd462f AS builder
 
 WORKDIR /opt/app-root/src
 
@@ -24,20 +24,24 @@ WORKDIR /opt/app-root/src
 # invocation non-interactive, otherwise that nested install blocks on a prompt.
 ENV CI=true
 
-RUN npm i -g corepack@0.34.6 && corepack enable
+RUN npm i -g corepack@0.36.0 && corepack enable
 
 COPY --chown=1001:1001 . .
 
 RUN pnpm install
 RUN pnpm build
 
+# Assemble the extension layout, so the final stage is a single COPY
+RUN mkdir -p /opt/app-root/extension
+RUN cp -r dist /opt/app-root/extension/
+RUN cp package.json /opt/app-root/extension/
+RUN cp LICENSE /opt/app-root/extension/
+RUN cp icon.png /opt/app-root/extension/
+RUN cp README.md /opt/app-root/extension/
+
 FROM scratch
 
-COPY --from=builder /opt/app-root/src/dist/ /extension/dist
-COPY --from=builder /opt/app-root/src/package.json /extension/
-COPY --from=builder /opt/app-root/src/LICENSE /extension/
-COPY --from=builder /opt/app-root/src/icon.png /extension/
-COPY --from=builder /opt/app-root/src/README.md /extension/
+COPY --from=builder /opt/app-root/extension /extension
 
 LABEL org.opencontainers.image.title="IBM Cloud account extension" \
       org.opencontainers.image.description="IBM Cloud account extension" \
