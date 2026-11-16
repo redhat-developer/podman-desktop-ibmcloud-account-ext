@@ -19,10 +19,8 @@ import { join, resolve } from 'node:path';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
-  // No design:type metadata in tests: inversify uses explicit @inject() tokens,
-  // And the generated `typeof X === 'undefined' ? Object : X` counts as uncovered branches in vitest v4+.
-  // Spread so it also type-checks with vitest v3 (bundled vite 7 has no 'oxc' option, it is ignored there)
-  ...{ oxc: { decorator: { legacy: true, emitDecoratorMetadata: false } } },
+  // Inversify uses explicit @inject() tokens: skip design:type metadata (tsconfig enables it), its generated branches are never covered
+  oxc: { decorator: { legacy: true, emitDecoratorMetadata: false } },
   resolve: {
     alias: {
       '/@/': `${join(__dirname, 'src')}/`,
